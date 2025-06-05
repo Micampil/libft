@@ -97,11 +97,14 @@ make test
 ```
 .
 ├── Makefile
-├── includes/
+├── includes/          # Header files
 │   └── libft.h
-├── srcs/
-│   ├── ft_*.c
+├── srcs/              # All source files
+│   ├── ft_atoi.c
+│   ├── ft_bzero.c
+│   ├── ft_calloc.c
 │   └── ...
+├── objs/              # Object files (created during compilation)
 └── README.md
 ```
 
@@ -118,3 +121,7 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 - 42 School for the project requirements and learning opportunity
 - Fellow 42 students for testing and feedback
+
+---
+
+*Last updated: 2025-06-05 01:28:14*
