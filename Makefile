@@ -6,11 +6,16 @@
 #    By: micampil <micampil@student.42lisboa.com>   +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/04/17 18:38:24 by micampil          #+#    #+#              #
-#    Updated: 2025/04/25 13:33:46 by micampil         ###   ########.fr        #
+#    Updated: 2025/06/05 01:27:31 by micampil         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
+# Directories
+SRC_DIR = srcs
+INC_DIR = includes
+OBJ_DIR = objs
 
+# Files
 FILES = ft_atoi.c ft_bzero.c ft_calloc.c ft_isalnum.c \
 		ft_isalpha.c ft_isascii.c ft_isdigit.c ft_isprint.c \
 		ft_itoa.c ft_memchr.c ft_memcmp.c \
@@ -22,38 +27,69 @@ FILES = ft_atoi.c ft_bzero.c ft_calloc.c ft_isalnum.c \
 		ft_strtrim.c ft_substr.c ft_tolower.c ft_toupper.c
 
 BONUS = ft_lstadd_back.c ft_lstadd_front.c ft_lstclear.c \
-					ft_lstdelone.c ft_lstiter.c ft_lstlast.c \
-					ft_lstmap.c ft_lstnew.c ft_lstsize.c
+		ft_lstdelone.c ft_lstiter.c ft_lstlast.c \
+		ft_lstmap.c ft_lstnew.c ft_lstsize.c
 
-OBJS = $(FILES:.c=.o)
-BONUS_OBJS = $(BONUS:.c=.o)
+# Source and object paths
+SRCS = $(addprefix $(SRC_DIR)/, $(FILES))
+BONUS_SRCS = $(addprefix $(SRC_DIR)/, $(BONUS))
+OBJS = $(addprefix $(OBJ_DIR)/, $(FILES:.c=.o))
+BONUS_OBJS = $(addprefix $(OBJ_DIR)/, $(BONUS:.c=.o))
 
-
+# Library name and compiler settings
 NAME = libft.a
 CC = gcc
 CFLAGS = -Wall -Wextra -Werror
 RM = rm -f
 
-all: $(NAME)
+all: create_dirs $(NAME)
+
+# Create necessary directories
+create_dirs:
+	@mkdir -p $(SRC_DIR)
+	@mkdir -p $(INC_DIR)
+	@mkdir -p $(OBJ_DIR)
 
 $(NAME): $(OBJS)
-	@echo "Compilled libft..."
+	@echo "Compiling libft..."
 	@ar rcs $(NAME) $(OBJS)
+	@echo "✅ libft.a created successfully!"
 
-bonus: $(OBJS) $(BONUS_OBJS)
-	@echo "Compilled libft with bonus..."
+# Compile .c files to .o files
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
+	@$(CC) $(CFLAGS) -I$(INC_DIR) -c $< -o $@
+
+bonus: create_dirs $(OBJS) $(BONUS_OBJS)
+	@echo "Compiling libft with bonus..."
 	@ar rcs $(NAME) $(OBJS) $(BONUS_OBJS)
 	@touch bonus
+	@echo "✅ libft.a with bonus created successfully!"
 
 clean:
-	@echo "Cleaned up..."
+	@echo "Cleaning up..."
 	@$(RM) $(OBJS) $(BONUS_OBJS)
+	@rm -rf $(OBJ_DIR)
+	@echo "🧹 Object files cleaned!"
 
 fclean: clean
-	@echo "Removed libft.a..."
+	@echo "Removing libft.a..."
 	@$(RM) $(NAME)
 	@$(RM) bonus
+	@echo "🧹 libft.a cleaned!"
 
-re: fclean $(NAME)
+re: fclean all
 
-.PHONY: all clean fclean re
+# Move current files to src directory
+setup:
+	@mkdir -p $(SRC_DIR) $(INC_DIR) $(OBJ_DIR)
+	@if [ -f "libft.h" ]; then \
+		mv libft.h $(INC_DIR)/; \
+	fi
+	@for file in *.c; do \
+		if [ -f "$$file" ]; then \
+			mv $$file $(SRC_DIR)/; \
+		fi \
+	done
+	@echo "📁 Project structure setup complete!"
+
+.PHONY: all clean fclean re bonus create_dirs setup
